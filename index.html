@@ -75,35 +75,20 @@
     .nav-logo {
       display: flex;
       align-items: center;
-      gap: 10px;
       text-decoration: none;
     }
 
-    .nav-logo-mark {
-      width: 32px; height: 32px;
-      border: 1.5px solid var(--accent);
-      border-radius: 6px;
-      display: flex; align-items: center; justify-content: center;
-      box-shadow: 0 0 12px var(--accent-glow);
-      position: relative;
-      overflow: hidden;
+    .nav-logo-img {
+      height: 38px;
+      width: auto;
+      filter: invert(1) brightness(1.1);
+      mix-blend-mode: screen;
+      opacity: 0.92;
+      transition: opacity 0.25s;
     }
 
-    .nav-logo-mark::after {
-      content: '';
-      position: absolute;
-      inset: 4px;
-      background: var(--accent);
-      clip-path: polygon(50% 0%, 100% 38%, 82% 100%, 18% 100%, 0% 38%);
-      opacity: 0.9;
-    }
-
-    .nav-logo-text {
-      font-size: 1.05rem;
-      font-weight: 700;
-      letter-spacing: 0.12em;
-      color: var(--text-1);
-      text-transform: uppercase;
+    .nav-logo:hover .nav-logo-img {
+      opacity: 1;
     }
 
     .nav-links {
@@ -861,8 +846,7 @@
   <!-- NAV -->
   <nav>
     <a href="#hero" class="nav-logo">
-      <div class="nav-logo-mark"></div>
-      <span class="nav-logo-text">Onyx Grid</span>
+      <img src="logo.png" alt="Onyx Grid" class="nav-logo-img" />
     </a>
     <ul class="nav-links">
       <li><a href="#what">Technology</a></li>
