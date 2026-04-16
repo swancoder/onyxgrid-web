@@ -1,30 +1,1123 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Onyx Grid | Autonomous Drone Detection</title>
-    <style>
-        body { background: #0a0a0a; color: #e0e0e0; font-family: 'Inter', -apple-system, sans-serif; display: flex; align-items: center; justify-content: center; height: 100vh; margin: 0; }
-        .container { text-align: center; padding: 20px; }
-        h1 { font-size: 3rem; letter-spacing: -1px; margin-bottom: 0.5rem; background: linear-gradient(90deg, #fff, #888); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
-        p { font-size: 1.2rem; color: #888; margin-bottom: 2rem; }
-        .badge { background: #1a1a1a; border: 1px border #333; padding: 5px 15px; border-radius: 20px; font-size: 0.8rem; text-transform: uppercase; color: #00ff41; }
-        .contact { color: #fff; text-decoration: none; border-bottom: 1px solid #333; transition: 0.3s; }
-        .contact:hover { border-color: #fff; }
-    </style>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Onyx Grid | Autonomous Edge Intelligence for Airspace Security</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg-0: #03070d;
+      --bg-1: #07111e;
+      --bg-2: #0c1a2e;
+      --bg-3: #112038;
+      --accent: #00e5ff;
+      --accent-dim: rgba(0,229,255,0.15);
+      --accent-glow: rgba(0,229,255,0.35);
+      --green: #00ff88;
+      --green-dim: rgba(0,255,136,0.12);
+      --text-1: #f0f6ff;
+      --text-2: #8ba8c8;
+      --text-3: #4d6a88;
+      --border: rgba(0,229,255,0.12);
+      --radius: 12px;
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      font-family: 'Inter', -apple-system, sans-serif;
+      background: var(--bg-0);
+      color: var(--text-1);
+      line-height: 1.6;
+      overflow-x: hidden;
+    }
+
+    /* ── NOISE TEXTURE OVERLAY ── */
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");
+      pointer-events: none;
+      z-index: 0;
+      opacity: 0.5;
+    }
+
+    /* ── SCROLLBAR ── */
+    ::-webkit-scrollbar { width: 6px; }
+    ::-webkit-scrollbar-track { background: var(--bg-0); }
+    ::-webkit-scrollbar-thumb { background: var(--bg-3); border-radius: 3px; }
+
+    /* ══════════════════════════════
+       NAV
+    ══════════════════════════════ */
+    nav {
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      z-index: 100;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 5%;
+      height: 68px;
+      background: rgba(3,7,13,0.7);
+      backdrop-filter: blur(18px);
+      -webkit-backdrop-filter: blur(18px);
+      border-bottom: 1px solid var(--border);
+    }
+
+    .nav-logo {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      text-decoration: none;
+    }
+
+    .nav-logo-mark {
+      width: 32px; height: 32px;
+      border: 1.5px solid var(--accent);
+      border-radius: 6px;
+      display: flex; align-items: center; justify-content: center;
+      box-shadow: 0 0 12px var(--accent-glow);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .nav-logo-mark::after {
+      content: '';
+      position: absolute;
+      inset: 4px;
+      background: var(--accent);
+      clip-path: polygon(50% 0%, 100% 38%, 82% 100%, 18% 100%, 0% 38%);
+      opacity: 0.9;
+    }
+
+    .nav-logo-text {
+      font-size: 1.05rem;
+      font-weight: 700;
+      letter-spacing: 0.12em;
+      color: var(--text-1);
+      text-transform: uppercase;
+    }
+
+    .nav-links {
+      display: flex;
+      gap: 2.5rem;
+      list-style: none;
+    }
+
+    .nav-links a {
+      color: var(--text-2);
+      text-decoration: none;
+      font-size: 0.82rem;
+      font-weight: 500;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      transition: color 0.25s;
+    }
+
+    .nav-links a:hover { color: var(--accent); }
+
+    .nav-badge {
+      display: flex;
+      align-items: center;
+      gap: 7px;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.72rem;
+      color: var(--green);
+      background: var(--green-dim);
+      border: 1px solid rgba(0,255,136,0.25);
+      padding: 5px 12px;
+      border-radius: 20px;
+    }
+
+    .pulse-dot {
+      width: 7px; height: 7px;
+      background: var(--green);
+      border-radius: 50%;
+      animation: pulse 2s ease-in-out infinite;
+      box-shadow: 0 0 6px var(--green);
+    }
+
+    @keyframes pulse {
+      0%, 100% { opacity: 1; transform: scale(1); }
+      50% { opacity: 0.4; transform: scale(0.8); }
+    }
+
+    /* ══════════════════════════════
+       HERO
+    ══════════════════════════════ */
+    #hero {
+      position: relative;
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 120px 5% 80px;
+      overflow: hidden;
+    }
+
+    .hero-grid-bg {
+      position: absolute;
+      inset: 0;
+      background-image:
+        linear-gradient(rgba(0,229,255,0.04) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(0,229,255,0.04) 1px, transparent 1px);
+      background-size: 60px 60px;
+      mask-image: radial-gradient(ellipse 80% 70% at 50% 50%, black 30%, transparent 100%);
+    }
+
+    .hero-glow-1 {
+      position: absolute;
+      width: 700px; height: 700px;
+      background: radial-gradient(circle, rgba(0,229,255,0.08) 0%, transparent 70%);
+      top: -150px; left: -200px;
+      pointer-events: none;
+    }
+
+    .hero-glow-2 {
+      position: absolute;
+      width: 500px; height: 500px;
+      background: radial-gradient(circle, rgba(0,255,136,0.06) 0%, transparent 70%);
+      bottom: 0; right: -100px;
+      pointer-events: none;
+    }
+
+    .hero-content {
+      position: relative;
+      max-width: 860px;
+      text-align: center;
+      z-index: 1;
+    }
+
+    .hero-eyebrow {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.72rem;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--accent);
+      background: var(--accent-dim);
+      border: 1px solid rgba(0,229,255,0.2);
+      padding: 6px 16px;
+      border-radius: 20px;
+      margin-bottom: 2rem;
+    }
+
+    .hero-title {
+      font-size: clamp(3rem, 7vw, 5.5rem);
+      font-weight: 900;
+      letter-spacing: -0.03em;
+      line-height: 1.0;
+      margin-bottom: 1.5rem;
+      background: linear-gradient(135deg, #ffffff 30%, #7ab8d4 70%, var(--accent) 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .hero-title span {
+      display: block;
+      font-size: 0.55em;
+      font-weight: 300;
+      letter-spacing: 0.02em;
+      background: linear-gradient(90deg, #8ba8c8, #a0c0d8);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      margin-top: 0.3em;
+    }
+
+    .hero-sub {
+      font-size: 1.1rem;
+      color: var(--text-2);
+      max-width: 620px;
+      margin: 0 auto 3rem;
+      line-height: 1.75;
+    }
+
+    .hero-ctas {
+      display: flex;
+      gap: 1rem;
+      justify-content: center;
+      flex-wrap: wrap;
+    }
+
+    .btn-primary {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: var(--accent);
+      color: #000;
+      font-weight: 700;
+      font-size: 0.85rem;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      padding: 14px 28px;
+      border-radius: 8px;
+      text-decoration: none;
+      transition: box-shadow 0.3s, transform 0.2s;
+      box-shadow: 0 0 24px var(--accent-glow);
+    }
+
+    .btn-primary:hover {
+      box-shadow: 0 0 36px rgba(0,229,255,0.55);
+      transform: translateY(-2px);
+    }
+
+    .btn-ghost {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: transparent;
+      color: var(--text-1);
+      font-weight: 600;
+      font-size: 0.85rem;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      padding: 13px 28px;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      text-decoration: none;
+      transition: border-color 0.25s, background 0.25s;
+    }
+
+    .btn-ghost:hover {
+      border-color: rgba(0,229,255,0.4);
+      background: var(--accent-dim);
+    }
+
+    .hero-stats {
+      display: flex;
+      justify-content: center;
+      gap: 3rem;
+      margin-top: 5rem;
+      flex-wrap: wrap;
+    }
+
+    .stat {
+      text-align: center;
+    }
+
+    .stat-value {
+      font-size: 2rem;
+      font-weight: 800;
+      color: var(--text-1);
+      letter-spacing: -0.02em;
+    }
+
+    .stat-value .accent { color: var(--accent); }
+
+    .stat-label {
+      font-size: 0.75rem;
+      color: var(--text-3);
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      margin-top: 4px;
+    }
+
+    .stat-divider {
+      width: 1px;
+      background: var(--border);
+      height: 50px;
+      align-self: center;
+    }
+
+    /* ══════════════════════════════
+       SECTION COMMON
+    ══════════════════════════════ */
+    section {
+      position: relative;
+      padding: 100px 5%;
+    }
+
+    .section-label {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.68rem;
+      letter-spacing: 0.25em;
+      text-transform: uppercase;
+      color: var(--accent);
+      margin-bottom: 1rem;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .section-label::before {
+      content: '';
+      display: inline-block;
+      width: 24px; height: 1px;
+      background: var(--accent);
+    }
+
+    .section-title {
+      font-size: clamp(1.8rem, 3.5vw, 2.8rem);
+      font-weight: 800;
+      letter-spacing: -0.02em;
+      line-height: 1.15;
+      margin-bottom: 1.2rem;
+    }
+
+    .section-body {
+      font-size: 1.05rem;
+      color: var(--text-2);
+      line-height: 1.8;
+      max-width: 600px;
+    }
+
+    /* ══════════════════════════════
+       WHAT IT DOES
+    ══════════════════════════════ */
+    #what {
+      background: var(--bg-1);
+    }
+
+    .what-inner {
+      max-width: 1200px;
+      margin: 0 auto;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 80px;
+      align-items: center;
+    }
+
+    .what-image-wrap {
+      position: relative;
+      border-radius: var(--radius);
+      overflow: hidden;
+    }
+
+    .what-image-wrap::before {
+      content: '';
+      position: absolute;
+      inset: -1px;
+      border-radius: var(--radius);
+      background: linear-gradient(135deg, rgba(0,229,255,0.3), transparent 50%, rgba(0,255,136,0.15));
+      z-index: 1;
+      pointer-events: none;
+    }
+
+    .what-image-wrap img {
+      width: 100%;
+      height: 420px;
+      object-fit: cover;
+      display: block;
+      border-radius: var(--radius);
+      filter: brightness(0.9) contrast(1.05);
+    }
+
+    .what-tags {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+      margin-top: 1.8rem;
+    }
+
+    .tag {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.7rem;
+      padding: 5px 12px;
+      border-radius: 6px;
+      border: 1px solid var(--border);
+      color: var(--text-2);
+      background: var(--bg-2);
+      letter-spacing: 0.05em;
+    }
+
+    .tag.active {
+      color: var(--accent);
+      border-color: rgba(0,229,255,0.3);
+      background: var(--accent-dim);
+    }
+
+    /* ══════════════════════════════
+       WHY IT'S NEEDED
+    ══════════════════════════════ */
+    #why {
+      background: var(--bg-0);
+    }
+
+    .why-inner {
+      max-width: 1200px;
+      margin: 0 auto;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 80px;
+      align-items: center;
+    }
+
+    .why-image-wrap {
+      position: relative;
+      order: 2;
+    }
+
+    .why-image-wrap img {
+      width: 100%;
+      height: 460px;
+      object-fit: cover;
+      border-radius: var(--radius);
+      display: block;
+      filter: brightness(0.85) contrast(1.1);
+    }
+
+    .why-image-overlay {
+      position: absolute;
+      inset: 0;
+      border-radius: var(--radius);
+      background: linear-gradient(225deg, rgba(0,229,255,0.08), transparent 60%);
+      border: 1px solid var(--border);
+    }
+
+    .why-text { order: 1; }
+
+    .threat-list {
+      margin-top: 2rem;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .threat-item {
+      display: flex;
+      align-items: flex-start;
+      gap: 14px;
+      padding: 16px 18px;
+      background: var(--bg-2);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      font-size: 0.9rem;
+      color: var(--text-2);
+      transition: border-color 0.25s;
+    }
+
+    .threat-item:hover {
+      border-color: rgba(0,229,255,0.3);
+    }
+
+    .threat-icon {
+      font-size: 1.1rem;
+      margin-top: 1px;
+      flex-shrink: 0;
+    }
+
+    /* ══════════════════════════════
+       ADVANTAGES
+    ══════════════════════════════ */
+    #advantages {
+      background: var(--bg-1);
+    }
+
+    .adv-header {
+      max-width: 1200px;
+      margin: 0 auto 4rem;
+    }
+
+    .adv-grid {
+      max-width: 1200px;
+      margin: 0 auto;
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 24px;
+    }
+
+    .adv-card {
+      background: var(--bg-2);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 36px 30px;
+      position: relative;
+      overflow: hidden;
+      transition: border-color 0.3s, transform 0.3s, box-shadow 0.3s;
+    }
+
+    .adv-card:hover {
+      border-color: rgba(0,229,255,0.35);
+      transform: translateY(-6px);
+      box-shadow: 0 20px 48px rgba(0,0,0,0.4), 0 0 24px rgba(0,229,255,0.08);
+    }
+
+    .adv-card::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 2px;
+      background: linear-gradient(90deg, transparent, var(--accent), transparent);
+      opacity: 0;
+      transition: opacity 0.3s;
+    }
+
+    .adv-card:hover::before { opacity: 1; }
+
+    .adv-number {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.65rem;
+      color: var(--text-3);
+      letter-spacing: 0.15em;
+      margin-bottom: 1.2rem;
+    }
+
+    .adv-icon {
+      width: 48px; height: 48px;
+      background: var(--accent-dim);
+      border: 1px solid rgba(0,229,255,0.2);
+      border-radius: 10px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1.4rem;
+      margin-bottom: 1.5rem;
+    }
+
+    .adv-title {
+      font-size: 1.2rem;
+      font-weight: 700;
+      margin-bottom: 0.8rem;
+      color: var(--text-1);
+    }
+
+    .adv-body {
+      font-size: 0.9rem;
+      color: var(--text-2);
+      line-height: 1.75;
+    }
+
+    /* ══════════════════════════════
+       GALLERY / SHOWCASE
+    ══════════════════════════════ */
+    #gallery {
+      background: var(--bg-0);
+      padding-bottom: 120px;
+    }
+
+    .gallery-header {
+      max-width: 1200px;
+      margin: 0 auto 3.5rem;
+    }
+
+    .gallery-grid {
+      max-width: 1200px;
+      margin: 0 auto;
+      display: grid;
+      grid-template-columns: 2fr 1fr;
+      grid-template-rows: auto auto;
+      gap: 20px;
+    }
+
+    .gallery-item {
+      position: relative;
+      border-radius: var(--radius);
+      overflow: hidden;
+      background: var(--bg-2);
+      border: 1px solid var(--border);
+    }
+
+    .gallery-item:first-child {
+      grid-row: span 2;
+    }
+
+    .gallery-item img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+      min-height: 250px;
+      filter: brightness(0.88) contrast(1.05) saturate(0.9);
+      transition: filter 0.4s, transform 0.4s;
+    }
+
+    .gallery-item:hover img {
+      filter: brightness(1) contrast(1.05) saturate(1.05);
+      transform: scale(1.03);
+    }
+
+    .gallery-item-caption {
+      position: absolute;
+      bottom: 0; left: 0; right: 0;
+      padding: 20px 22px;
+      background: linear-gradient(to top, rgba(3,7,13,0.9) 0%, transparent 100%);
+      font-size: 0.8rem;
+      color: var(--text-2);
+      letter-spacing: 0.05em;
+      font-family: 'JetBrains Mono', monospace;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .gallery-item-caption::before {
+      content: '';
+      width: 6px; height: 6px;
+      border-radius: 50%;
+      background: var(--accent);
+      box-shadow: 0 0 6px var(--accent);
+      flex-shrink: 0;
+    }
+
+    /* ══════════════════════════════
+       TECH SPEC STRIP
+    ══════════════════════════════ */
+    #tech {
+      background: var(--bg-1);
+      padding: 70px 5%;
+      border-top: 1px solid var(--border);
+      border-bottom: 1px solid var(--border);
+    }
+
+    .tech-inner {
+      max-width: 1200px;
+      margin: 0 auto;
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      flex-wrap: wrap;
+      justify-content: center;
+    }
+
+    .tech-item {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 6px;
+      padding: 20px 28px;
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      background: var(--bg-2);
+      min-width: 160px;
+      text-align: center;
+    }
+
+    .tech-item-label {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.62rem;
+      color: var(--text-3);
+      text-transform: uppercase;
+      letter-spacing: 0.12em;
+    }
+
+    .tech-item-value {
+      font-size: 1rem;
+      font-weight: 700;
+      color: var(--accent);
+    }
+
+    .tech-sep {
+      width: 1px;
+      height: 40px;
+      background: var(--border);
+    }
+
+    /* ══════════════════════════════
+       FOOTER
+    ══════════════════════════════ */
+    footer {
+      background: var(--bg-0);
+      padding: 60px 5% 40px;
+      border-top: 1px solid var(--border);
+    }
+
+    .footer-inner {
+      max-width: 1200px;
+      margin: 0 auto;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 24px;
+    }
+
+    .footer-logo {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .footer-logo-mark {
+      width: 28px; height: 28px;
+      border: 1px solid var(--accent);
+      border-radius: 5px;
+      display: flex; align-items: center; justify-content: center;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .footer-logo-mark::after {
+      content: '';
+      position: absolute;
+      inset: 4px;
+      background: var(--accent);
+      clip-path: polygon(50% 0%, 100% 38%, 82% 100%, 18% 100%, 0% 38%);
+      opacity: 0.85;
+    }
+
+    .footer-logo-text {
+      font-size: 0.9rem;
+      font-weight: 700;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--text-2);
+    }
+
+    .footer-center {
+      font-size: 0.78rem;
+      color: var(--text-3);
+      text-align: center;
+      line-height: 1.6;
+    }
+
+    .footer-right {
+      display: flex;
+      gap: 1.5rem;
+    }
+
+    .footer-right a {
+      font-size: 0.78rem;
+      color: var(--text-3);
+      text-decoration: none;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      transition: color 0.2s;
+    }
+
+    .footer-right a:hover { color: var(--accent); }
+
+    .footer-bottom {
+      max-width: 1200px;
+      margin: 32px auto 0;
+      padding-top: 24px;
+      border-top: 1px solid var(--border);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 12px;
+    }
+
+    .footer-copy {
+      font-size: 0.72rem;
+      color: var(--text-3);
+    }
+
+    .footer-location {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.68rem;
+      color: var(--text-3);
+      letter-spacing: 0.08em;
+    }
+
+    .footer-location-dot {
+      width: 6px; height: 6px;
+      background: var(--green);
+      border-radius: 50%;
+      box-shadow: 0 0 5px var(--green);
+    }
+
+    /* ══════════════════════════════
+       SCROLL ANIMATIONS
+    ══════════════════════════════ */
+    .reveal {
+      opacity: 0;
+      transform: translateY(30px);
+      transition: opacity 0.7s ease, transform 0.7s ease;
+    }
+
+    .reveal.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    /* ══════════════════════════════
+       RESPONSIVE
+    ══════════════════════════════ */
+    @media (max-width: 960px) {
+      .what-inner, .why-inner { grid-template-columns: 1fr; gap: 40px; }
+      .why-image-wrap { order: -1; }
+      .adv-grid { grid-template-columns: 1fr 1fr; }
+      .gallery-grid { grid-template-columns: 1fr; }
+      .gallery-item:first-child { grid-row: auto; }
+      .nav-links { display: none; }
+    }
+
+    @media (max-width: 640px) {
+      .adv-grid { grid-template-columns: 1fr; }
+      .hero-stats { gap: 1.5rem; }
+      .stat-divider { display: none; }
+      .footer-inner { flex-direction: column; align-items: flex-start; }
+      .tech-inner { gap: 12px; }
+      .tech-sep { display: none; }
+    }
+  </style>
 </head>
 <body>
-    <div class="container">
-        <div class="badge">System Online</div>
-        <h1>ONYX GRID</h1>
-        <p>Next-gen Autonomous Acoustic & AI Drone Detection Infrastructure.</p>
-        <div style="margin-top: 50px; font-size: 0.9rem;">
-            Contact: <a href="mailto:ceo@onyxgrid.eu" class="contact">ceo@onyxgrid.eu</a>
-        </div>
-        <div style="color: #444; margin-top: 30px; font-size: 0.7rem;">
-            SIA Onyx Grid | Riga, Latvia
-        </div>
+
+  <!-- NAV -->
+  <nav>
+    <a href="#hero" class="nav-logo">
+      <div class="nav-logo-mark"></div>
+      <span class="nav-logo-text">Onyx Grid</span>
+    </a>
+    <ul class="nav-links">
+      <li><a href="#what">Technology</a></li>
+      <li><a href="#why">Mission</a></li>
+      <li><a href="#advantages">Advantages</a></li>
+      <li><a href="#gallery">System</a></li>
+    </ul>
+    <div class="nav-badge">
+      <div class="pulse-dot"></div>
+      System Online
     </div>
+  </nav>
+
+  <!-- HERO -->
+  <section id="hero">
+    <div class="hero-grid-bg"></div>
+    <div class="hero-glow-1"></div>
+    <div class="hero-glow-2"></div>
+    <div class="hero-content">
+      <div class="hero-eyebrow">
+        Passive &bull; Edge AI &bull; Mesh Network
+      </div>
+      <h1 class="hero-title">
+        ONYX GRID
+        <span>Autonomous Edge Intelligence<br>for Airspace Security</span>
+      </h1>
+      <p class="hero-sub">
+        A decentralized infrastructure of smart sensor nodes designed to detect, track, and alert against unauthorized UAV activity — in real-time, without blind spots.
+      </p>
+      <div class="hero-ctas">
+        <a href="#what" class="btn-primary">Explore Technology ↓</a>
+        <a href="#advantages" class="btn-ghost">Key Advantages</a>
+      </div>
+      <div class="hero-stats">
+        <div class="stat">
+          <div class="stat-value">24<span class="accent">/</span>7</div>
+          <div class="stat-label">Continuous Monitoring</div>
+        </div>
+        <div class="stat-divider"></div>
+        <div class="stat">
+          <div class="stat-value">0<span class="accent">ms</span></div>
+          <div class="stat-label">Cloud Dependency</div>
+        </div>
+        <div class="stat-divider"></div>
+        <div class="stat">
+          <div class="stat-value"><span class="accent">∞</span></div>
+          <div class="stat-label">Mesh Scalability</div>
+        </div>
+        <div class="stat-divider"></div>
+        <div class="stat">
+          <div class="stat-value">0<span class="accent">RF</span></div>
+          <div class="stat-label">Detectable Emissions</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- TECH SPEC STRIP -->
+  <div id="tech">
+    <div class="tech-inner">
+      <div class="tech-item">
+        <div class="tech-item-label">Detection Mode</div>
+        <div class="tech-item-value">Multi-Modal</div>
+      </div>
+      <div class="tech-sep"></div>
+      <div class="tech-item">
+        <div class="tech-item-label">Processing</div>
+        <div class="tech-item-value">Edge AI</div>
+      </div>
+      <div class="tech-sep"></div>
+      <div class="tech-item">
+        <div class="tech-item-label">Network</div>
+        <div class="tech-item-value">LoRa Mesh</div>
+      </div>
+      <div class="tech-sep"></div>
+      <div class="tech-item">
+        <div class="tech-item-label">Sensor Fusion</div>
+        <div class="tech-item-value">Acoustic + Vision</div>
+      </div>
+      <div class="tech-sep"></div>
+      <div class="tech-item">
+        <div class="tech-item-label">System Type</div>
+        <div class="tech-item-value">Passive</div>
+      </div>
+      <div class="tech-sep"></div>
+      <div class="tech-item">
+        <div class="tech-item-label">Alert Latency</div>
+        <div class="tech-item-value">&lt; 5 Seconds</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- WHAT IT DOES -->
+  <section id="what">
+    <div class="what-inner">
+      <div class="what-image-wrap reveal">
+        <img src="onyx_1.png" alt="Onyx Grid sensor node in the field" loading="lazy" />
+      </div>
+      <div class="reveal">
+        <div class="section-label">How It Works</div>
+        <h2 class="section-title">Multi-Modal Detection.<br>Zero Cloud Dependency.</h2>
+        <p class="section-body">
+          Each Onyx Grid node fuses <strong>Acoustic Intelligence</strong> with <strong>Edge AI Vision</strong>, identifying drone signatures that traditional systems miss entirely. By processing data locally on the device, the system delivers instant detection without requiring constant high-bandwidth connectivity.
+        </p>
+        <p class="section-body" style="margin-top: 1rem;">
+          Acoustic signatures are cross-referenced with AI-driven visual analysis at the edge, producing robust detections even in adverse conditions — in the dark, through foliage, or under electronic interference.
+        </p>
+        <div class="what-tags">
+          <span class="tag active">Acoustic Intelligence</span>
+          <span class="tag active">Edge AI Vision</span>
+          <span class="tag">Local Processing</span>
+          <span class="tag">Real-Time Alerts</span>
+          <span class="tag">No Cloud Required</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- WHY IT'S NEEDED -->
+  <section id="why">
+    <div class="why-inner">
+      <div class="why-text reveal">
+        <div class="section-label">The Threat</div>
+        <h2 class="section-title">The Airspace Security Gap Is Real.</h2>
+        <p class="section-body">
+          The rapid proliferation of low-cost, low-altitude drones has created a significant vulnerability for critical infrastructure, private property, and tactical zones. Existing solutions are either too expensive, too visible, or too dependent on infrastructure that can be jammed.
+        </p>
+        <div class="threat-list">
+          <div class="threat-item">
+            <div class="threat-icon">🏭</div>
+            <div>Critical infrastructure exposed to surveillance and payload delivery threats.</div>
+          </div>
+          <div class="threat-item">
+            <div class="threat-icon">📡</div>
+            <div>Traditional radar systems emit detectable signals and are prohibitively costly to deploy at scale.</div>
+          </div>
+          <div class="threat-item">
+            <div class="threat-icon">🔇</div>
+            <div>Low-cost drones exploit gaps in cellular and Wi-Fi reliant detection systems.</div>
+          </div>
+          <div class="threat-item">
+            <div class="threat-icon">🛡️</div>
+            <div>Onyx Grid provides a persistent, 24/7 "digital canopy" — early warning before threats become crises.</div>
+          </div>
+        </div>
+      </div>
+      <div class="why-image-wrap reveal">
+        <img src="onyx_2.png" alt="Onyx Grid deployment scenario" loading="lazy" />
+        <div class="why-image-overlay"></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- KEY ADVANTAGES -->
+  <section id="advantages">
+    <div class="adv-header reveal">
+      <div class="section-label">Why Onyx Grid</div>
+      <h2 class="section-title">Built Different.<br>By Design.</h2>
+    </div>
+    <div class="adv-grid">
+      <div class="adv-card reveal">
+        <div class="adv-number">01 / 03</div>
+        <div class="adv-icon">👁️‍🗨️</div>
+        <div class="adv-title">Invisible &amp; Resilient</div>
+        <p class="adv-body">
+          Unlike active radars, Onyx Grid is a fully <strong>passive system</strong>. It emits zero detectable signals. Operating over a redundant <strong>LoRa Mesh Network</strong>, the system remains online even when cellular networks and Wi-Fi are jammed or unavailable — the scenarios where detection matters most.
+        </p>
+      </div>
+      <div class="adv-card reveal">
+        <div class="adv-number">02 / 03</div>
+        <div class="adv-icon">⚡</div>
+        <div class="adv-title">Cost-Efficient Scaling</div>
+        <p class="adv-body">
+          Our decentralized architecture enables rapid deployment of dozens of sensor nodes at a <strong>fraction of the cost</strong> of a single military-grade radar station. Complex terrains, vast perimeters, and urban environments — all covered with no blind spots and no massive infrastructure investment.
+        </p>
+      </div>
+      <div class="adv-card reveal">
+        <div class="adv-number">03 / 03</div>
+        <div class="adv-icon">🔒</div>
+        <div class="adv-title">Edge AI Privacy &amp; Speed</div>
+        <p class="adv-body">
+          By analyzing audio and video <strong>locally on each node</strong>, Onyx Grid guarantees maximum data privacy — no raw footage leaves the device. With zero round-trip cloud latency, alerts are dispatched in <strong>seconds, not minutes</strong>, giving security teams the time advantage they need.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <!-- GALLERY -->
+  <section id="gallery">
+    <div class="gallery-header reveal">
+      <div class="section-label">System in the Field</div>
+      <h2 class="section-title">Deployed. Operational.<br>Ready for Any Terrain.</h2>
+    </div>
+    <div class="gallery-grid">
+      <div class="gallery-item reveal">
+        <img src="onyx_2.png" alt="Onyx Grid node deployment" />
+        <div class="gallery-item-caption">Field Deployment — All-Weather Operation</div>
+      </div>
+      <div class="gallery-item reveal">
+        <img src="onyx_1.png" alt="Onyx Grid sensor hardware" />
+        <div class="gallery-item-caption">Sensor Node Hardware</div>
+      </div>
+      <div class="gallery-item reveal">
+        <img src="onyx_3.png" alt="Onyx Grid system integration" />
+        <div class="gallery-item-caption">System Integration &amp; Mesh Coverage</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- FOOTER -->
+  <footer>
+    <div class="footer-inner">
+      <div class="footer-logo">
+        <div class="footer-logo-mark"></div>
+        <span class="footer-logo-text">Onyx Grid</span>
+      </div>
+      <div class="footer-center">
+        Autonomous Edge Intelligence for Airspace Security
+      </div>
+      <div class="footer-right">
+        <a href="#what">Technology</a>
+        <a href="#why">Mission</a>
+        <a href="#advantages">Advantages</a>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <div class="footer-copy">&copy; 2026 SIA Onyx Grid. All rights reserved.</div>
+      <div class="footer-location">
+        <div class="footer-location-dot"></div>
+        Riga, Latvia
+      </div>
+    </div>
+  </footer>
+
+  <script>
+    // Intersection Observer for reveal animations
+    const reveals = document.querySelectorAll('.reveal');
+    const observer = new IntersectionObserver(entries => {
+      entries.forEach(e => {
+        if (e.isIntersecting) {
+          e.target.classList.add('visible');
+          observer.unobserve(e.target);
+        }
+      });
+    }, { threshold: 0.12 });
+
+    reveals.forEach(el => observer.observe(el));
+
+    // Stagger cards
+    document.querySelectorAll('.adv-grid .adv-card').forEach((card, i) => {
+      card.style.transitionDelay = `${i * 0.12}s`;
+    });
+
+    document.querySelectorAll('.gallery-grid .gallery-item').forEach((item, i) => {
+      item.style.transitionDelay = `${i * 0.1}s`;
+    });
+  </script>
 </body>
 </html>
