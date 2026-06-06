@@ -1,0 +1,12 @@
+User-agent: *
+Allow: /
+Allow: *.png
+Allow: *.jpg
+
+Disallow: /tmp/
+Disallow: /.git/
+
+Sitemap: https://onyxgrid.io/sitemap.xml
+
+# Crawl delay to respect server resources
+Crawl-delay: 1
